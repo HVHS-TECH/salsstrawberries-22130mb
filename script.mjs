@@ -4,7 +4,7 @@
 // Written by <Your Name Here>, Term 2 202?
 //
 // All variables & function begin with fb_  all const with FB_
-
+  
 // Diagnostic code lines have a comment appended to them //DIAG
 /**************************************************************/
 const COL_C = 'white';	    // These two const are part of the coloured 	
@@ -20,6 +20,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getDatabase } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import { ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+import { get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 /**************************************************************/
 // EXPORT FUNCTIONS
 var fb_gameDB;
@@ -63,7 +64,10 @@ function fb_authenticate() {
 
  function fb_writeto(){
     const dbReference = ref(fb_gameDB, "Users/UserID");
-    var UserInformation = { highscore: 50, Name: "person" };
+    var _name = document.getElementById("name").value;
+    var _favoriteFruit = document.getElementById("favoriteFruit").value;
+    var _fruitQuantity = document.getElementById("fruitQuantity").value;
+    var UserInformation = {name: _name, favoriteFruit: _favoriteFruit, _fruitQuantity: _fruitQuantity };
     set(dbReference, UserInformation).then(() => {
 
         console.log("written the following indformation to the database");
@@ -74,11 +78,39 @@ function fb_authenticate() {
         console.log(error);
     });
 }
+
+function fb_readall() {
+    const dbReference = ref(fb_gameDB, "Users/UserID");
+
+    get(dbReference).then((snapshot) => {
+
+        var fb_data = snapshot.val();
+
+        if (fb_data != null) {
+
+            console.log("read all success")
+            console.log(fb_data);
+        } else {
+
+            console.log("no record found")
+            console.log(fb_data);
+        }
+
+    }).catch((error) => {
+
+        console.log("read all error")
+        console.log(error);
+    });
+}
+
+
     
     
     
     export {
  
   fb_authenticate,
-  fb_writeto
+  fb_writeto,
+  fb_readall
+
 };
