@@ -24,6 +24,7 @@ import { get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.
 /**************************************************************/
 // EXPORT FUNCTIONS
 var fb_gameDB;
+var fb_uid;
 // List all the functions called by code or html outside of this module
 function fb_authenticate() {
     console.log('%c fb_initialise(): ', 'color: ' + COL_C + '; background-color: ' + COL_B + ';');
@@ -56,14 +57,17 @@ function fb_authenticate() {
         prompt: 'select_account'
     });
     signInWithPopup(AUTH, PROVIDER).then((result) => {
+        console.log(result);
+        console.log(result.user.uid);
+        fb_uid = result.user.uid;
     })
-        .catch((error) => {
-            console.log(error);
-        });
-    }
+    .catch((error) => {
+        console.log(error);
+    });
+}
 
  function fb_writeto(){
-    const dbReference = ref(fb_gameDB, "Users/UserID");
+    const dbReference = ref(fb_gameDB, ("Users/" + fb_uid));
     var _name = document.getElementById("name").value;
     var _favoriteFruit = document.getElementById("favoriteFruit").value;
     var _fruitQuantity = document.getElementById("fruitQuantity").value;
@@ -78,6 +82,30 @@ function fb_authenticate() {
         console.log(error);
     });
 }
+
+function login_text(){
+    if(fb_uid != null){
+        alert("You must be logged in to view email.");
+    }
+    else{
+        //calls read and waits for promise to return before changing email text
+        fb_readall().then((fb_data) => {
+            emailTemplate = `
+                <div style="background: #fff0f5; border: 1px solid #ccc; padding: 1rem; border-radius: 8px;">
+                    <p>Kia ora ${fb_data.Name},</p>
+                    <p>Thank you for joining us at Sal’s Strawberry Saloon (and other fruit products)! We're thrilled to have you as a customer!</p>
+                    <p>Based on your preferences, we’ll be sending you personalized recommendations for tasty and healthy treats made with the freshest fruit — especially those ${fb_data.FavoriteFruit} we heard you love!</p>
+                    <p>At the moment, we want to offer you a deal to get fresh ${fb_data.FavoriteFruit} ${fb_data.FruitQuantity}x a week!!</p>
+                    <p>Ngā mihi nui,</p>
+                    <p><em>The Sal’s Strawberry Saloon Team</em></p>
+                </div>`
+            document.getElementById("emailOutput").innerHTML = emailTemplate;
+        }).catch((error) => {
+            console.log("error")
+        });
+    }
+}
+
 
 function fb_readall() {
     const dbReference = ref(fb_gameDB, "Users/UserID");
@@ -103,7 +131,6 @@ function fb_readall() {
     });
 }
 
-
     
     
     
@@ -111,6 +138,6 @@ function fb_readall() {
  
   fb_authenticate,
   fb_writeto,
+  login_text,
   fb_readall
-
 };

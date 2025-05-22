@@ -12,10 +12,11 @@ console.log('%c main.mjs',
 // Import all external constants & functions required
 /**************************************************************/
 // Import all the constants & functions required from fb_io module
-import { fb_authenticate, fb_writeto } from './script.mjs';
+import { fb_authenticate, fb_readall, fb_writeto, login_text } from './script.mjs';
 window.fb_authenticate = fb_authenticate;
 window.fb_writeto = fb_writeto;
-
+window.fb_readall = fb_readall;
+window.login_text = login_text
 /**************************************************************/
 // index.html main code
 /**************************************************************/
